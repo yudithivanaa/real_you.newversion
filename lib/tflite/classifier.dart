@@ -13,6 +13,8 @@ class Classifier {
   /// Instance of Interpreter
   Interpreter _interpreter;
 
+  var logger = Logger();
+
   /// Labels file loaded as list
   List<String> _labels;
 
@@ -38,7 +40,7 @@ class Classifier {
   List<TfLiteType> _outputTypes;
 
   /// Number of results to show
-  static const int NUM_RESULTS = 10;
+  static const int NUM_RESULTS = 1;
 
   Classifier({
     Interpreter interpreter,
@@ -61,14 +63,19 @@ class Classifier {
       _outputShapes = [];
       _outputTypes = [];
       outputTensors.forEach((tensor) {
+        logger.d("Tensor name:  ", tensor.name);
+        logger.d("Tensor size: ", tensor.shape);
+        logger.d("Tensor type: ", tensor.type);
         _outputShapes.add(tensor.shape);
         _outputTypes.add(tensor.type);
       });
     } catch (e) {
       print("Error while creating interpreter: $e");
-      var logger = Logger();
       logger.d("Load Model is working!");
     }
+    logger.d("Intepreter: ", _interpreter);
+    logger.d("Labels:", labels);
+    logger.d("output tensors : ", _outputShapes);
   }
 
   /// Loads labels from assets
@@ -115,6 +122,7 @@ class Classifier {
         DateTime.now().millisecondsSinceEpoch - preProcessStart;
 
     // TensorBuffers for output tensors
+    logger.d("Output shape", _outputShapes[0]);
     TensorBuffer outputLocations = TensorBufferFloat(_outputShapes[0]);
     TensorBuffer outputClasses = TensorBufferFloat(_outputShapes[1]);
     TensorBuffer outputScores = TensorBufferFloat(_outputShapes[2]);
@@ -131,7 +139,6 @@ class Classifier {
       2: outputScores.buffer,
       3: numLocations.buffer,
     };
-
     var inferenceTimeStart = DateTime.now().millisecondsSinceEpoch;
 
     // run inference

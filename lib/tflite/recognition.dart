@@ -50,7 +50,7 @@ class Recognition {
         location.height * ratioY, CameraViewSingleton.actualPreviewSize.height);
 
     Rect transformedRect =
-    Rect.fromLTWH(transLeft, transTop, transWidth, transHeight);
+      Rect.fromLTWH(transLeft, transTop, transWidth, transHeight);
     var logger = Logger();
     logger.d("Logger is working!");
     return transformedRect;
